@@ -1,0 +1,89 @@
+---
+title: "Confidence in science and religion"
+author: "Alfonso Gonzalez Damian"
+date: "October 2014"
+output:
+  html_document:
+    theme: cerulean
+  pdf_document: default
+---
+
+<!-- For more info on RMarkdown see http://rmarkdown.rstudio.com/ -->
+
+<!-- Enter the code required to load your data in the space below. The data will be loaded but the line of code won't show up in your write up (echo=FALSE) in order to save space-->
+```{r echo=FALSE}
+load(url("http://bit.ly/dasi_gss_data"))
+```
+
+<!-- In the remainder of the document, add R code chunks as needed -->
+```{r echo=FALSE}
+close(url("http://bit.ly/dasi_gss_data"))
+```
+
+### Introduction:
+
+The research question of this study is as follows:
+What is the relationship between religious preference and confidence in science?
+Religious beliefs can influence the trust that people have about the activities of scientists, as well as the findings and scientific developments, it can be explored if that link does in fact exist.
+
+### Data:
+Data used for this exploration, were collected from surveys, applied from 1972 to 2012, correspondes with one of the datasets provided for the coursera course. Each survey from 1972 to 2004 was an independently drawn sample of English-speaking persons 18 years of age or over, living in non-institutional arrangements within the United States. Starting in 2006 Spanish-speakers were 
+added to the target population
+There are 57061 cases in the database, who are individual respondents of the survey.
+Variables of interest within the survey are:
+1) Confidence in scientific community: categorical (ordinal) Variable name: consci
+2) Religious preference: categorical (non ordinal) Variable name: relig
+Actual study is observational because it comes from surveys from 1972 to 2012 on the two variables of interest, and there was not variable manipulation of any kind. The findings on this particular study cannot be generalized to US population, because they are based on slightly biased samples from that population, specially from 1972 to 2006 where non-english speakers where excluded from the survey. 
+The relation analyzed and results cannot state causality, because the data was collected from a survey and not from a experiment like design.
+
+### Exploratory data analysis:
+An initial exploratory data analysis, graphical and numerical, is provided:
+Variables "relig" and "consci" plot
+```{r}
+plot(gss$relig, gss$consci)
+```
+Its hard to determine a clear relation between the variables religion and confidence in science community, at least in this graph. All that can be said is that there probably is a little diference between Jewish religion group versus others in terms of confidence in science.
+
+Summary statistics of both variables
+```{r}
+summary(gss$relig)
+summary(gss$consci)
+```
+And a cross table
+```{r}
+tabla <- table(gss$consci, gss$relig)
+print(tabla)
+```
+
+Based on this exploratory data, it can be seen a probable relation between two variables of interest, but differences between religon groups on their confidence in science are small and its not clear if there is a relation between them.
+
+### Inference:
+
+Hypothesis test for this study is to assess whether there is any statistically significant evidence that the religion affects confidence in science. In other words, the goal is to check whether the confidence in science variable is independent of the religion variable.
+Stating the hypotheses:
+H0: There is no difference in confidence in science between the groups of religion.
+HA: There is some difference in confidence in science between the groups of religion.
+Checking conditions to apply inference methods, the variables of interest are both categorical variables, with more than 2 levels, one has 3 and the other has 13, so appropiate method is hypothesis test, to compare proportions across several groups with no defined parameter of interest with Chi-square analysis. 
+Because some of the groups on results on the cross table dont met the sample size of at least 10 cases, a simulation should be used.
+Performing inference analysis:
+```{r}
+source("http://bit.ly/dasi_inference")
+inference(gss$relig, gss$consci, est = "proportion", type = "ht", method = "simulation", alternative = "greater")
+```
+
+With this results, the null hypothesis is rejected and the alternative accepted so it can be infered with a p-value of 0.0004998 that there is evidence to say that there are different proportions between groups of religion in their confidence in science, than those that would be expected only by chance. 
+
+### Conclusion:
+There is evidence that confirm that there are differences between religion groups in the confidence on science variable.
+
+
+### References
+Smith, Tom W., Michael Hout, and Peter V. Marsden. General Social Survey, 1972-2012 [Cumulative File]. ICPSR34802-v1. Storrs, CT: Roper Center for Public Opinion Research, University of Connecticut /Ann Arbor, MI: Inter-university Consortium for Political and Social Research [distributors], 2013-09-11. doi:10.3886/ICPSR34802.v1 Persistent URL: http://doi.org/10.3886/ICPSR34802.v1
+
+Coursera Extract: https://d396qusza40orc.cloudfront.net/statistics%2Fproject%2Fgss1.html#contv_toc
+
+### Appendix
+One page of the dataset
+```{r}
+head(gss)
+```
