@@ -45,3 +45,19 @@ with(Baltimore,{ plot(year, Emissions, ylim = c(0,200), main="Every fip by year"
 plot (years,Emissions,main="Mean of emissions by year", xlab="year", ylab="Mean in tons",type="l")
 abline(modelBal, col="red")
 legend("topright", pch = "-", col =("red"),legend = ("tendency"))
+########### 3a pregunta Of the four types of sources indicated by the type (point, nonpoint, onroad, nonroad) variable, 
+########### which of these four sources have seen decreases in emissions from 1999–2008 for Baltimore City? Which have seen increases 
+########### in emissions from 1999–2008? Use the ggplot2 plotting system to make a plot answer this question.
+library("ggplot2")
+g <- ggplot(Baltimore, aes(year, Emissions, type))
+p <- g + geom_point() + coord_cartesian(ylim = c(0, 70)) + facet_grid(. ~ type) + geom_smooth(method="lm") + labs(title="Emissions by type in Baltimore, Maryland") + labs(y="Emissions in tons")
+print(p)
+########### 4a pregunta Across the United States, how have emissions from coal combustion-related sources changed from 1999–2008?
+
+
+##########  5a pregunta How have emissions from motor vehicle sources changed from 1999–2008 in Baltimore City?
+
+
+
+##########  6a pregunta Compare emissions from motor vehicle sources in Baltimore City with emissions from motor vehicle sources in Los Angeles County, California (fips == "06037"). 
+##########  Which city has seen greater changes over time in motor vehicle emissions?
