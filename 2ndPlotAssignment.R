@@ -13,7 +13,8 @@ years <- c(1999,2002,2005,2008)
 Emmissions <- c(sum(s1[s1$year == 1999,4]),sum(s1[s1$year == 2002,4]),
                 sum(s1[s1$year == 2005,4]),sum(s1[s1$year == 2008,4]))
 Emybyyear <- data.frame(years, Emmissions)
-yylabels <-c(1999,2002,2005,2008)
-valemiss <- c(sum(NEI[NEI$year == 1999,4]),sum(NEI[NEI$year == 2002,4]),
-              sum(NEI[NEI$year == 2005,4]),sum(NEI[NEI$year == 2008,4]))
-plot (yylabels,valemiss,main="Emissions in the USA", xlab="year", ylab="Emissions in tons",type="l")
+#yylabels <-c(1999,2002,2005,2008)
+#valemiss <- c(sum(NEI[NEI$year == 1999,4]),sum(NEI[NEI$year == 2002,4]),
+#              sum(NEI[NEI$year == 2005,4]),sum(NEI[NEI$year == 2008,4]))
+#plot (yylabels,valemiss,main="Emissions in the USA", xlab="year", ylab="Emissions in tons",type="l")
+plot (years,Emmissions,main="Emissions in the USA", xlab="year", ylab="Emissions in tons",type="l")
