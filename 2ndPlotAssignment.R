@@ -53,11 +53,12 @@ g <- ggplot(Baltimore, aes(year, Emissions, type))
 p <- g + geom_point() + coord_cartesian(ylim = c(0, 70)) + facet_grid(. ~ type) + geom_smooth(method="lm") + labs(title="Emissions by type in Baltimore, Maryland") + labs(y="Emissions in tons")
 print(p)
 ########### 4a pregunta Across the United States, how have emissions from coal combustion-related sources changed from 1999–2008?
-
+##(EI.Sector contains "Fuel Comb" AND "Coal") OR (EI.Sector contains "Fuel Comb - Residential - Other" AND Short.Name contains "Coal")
 
 ##########  5a pregunta How have emissions from motor vehicle sources changed from 1999–2008 in Baltimore City?
-
+#type == "ON-ROAD"
 
 
 ##########  6a pregunta Compare emissions from motor vehicle sources in Baltimore City with emissions from motor vehicle sources in Los Angeles County, California (fips == "06037"). 
 ##########  Which city has seen greater changes over time in motor vehicle emissions?
+#type == "ON ROAD"
