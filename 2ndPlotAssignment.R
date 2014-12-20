@@ -1,4 +1,4 @@
-## This first line will likely take a few seconds. Be patient!
+## Load Data
 NEI <- readRDS("summarySCC_PM25.rds")
 SCC <- readRDS("Source_Classification_Code.rds")
 ########### Subset para pruebas
@@ -53,12 +53,38 @@ g <- ggplot(Baltimore, aes(year, Emissions, type))
 p <- g + geom_point() + coord_cartesian(ylim = c(0, 70)) + facet_grid(. ~ type) + geom_smooth(method="lm") + labs(title="Emissions by type in Baltimore, Maryland") + labs(y="Emissions in tons")
 print(p)
 ########### 4a pregunta Across the United States, how have emissions from coal combustion-related sources changed from 1999â€“2008?
+########### Subset para pruebas
+s1 <- NEI[sample(nrow(NEI), 1000, replace = FALSE),]
+
+#Emissions <- c(mean(s1[s1$year == 1999,4],trim=0.1),mean(s1[s1$year == 2002,4],trim=0.1),
+#               mean(s1[s1$year == 2005,4],trim=0.1),mean(s1[s1$year == 2008,4],trim=0.1))
+#years <- c(1999,2002,2005,2008)
+#Emybyyear <- data.frame(years, Emissions)
+#modelito <- lm(Emissions ~ years, data = Emybyyear)
 ##(EI.Sector contains "Fuel Comb" AND "Coal") OR (EI.Sector contains "Fuel Comb - Residential - Other" AND Short.Name contains "Coal")
+lista <- (SCC[SCC$EI.Sector== "Fuel Comb - Electric Generation - Coal" | SCC$EI.Sector== "Fuel Comb - Comm/Institutional - Coal" | SCC$EI.Sector== "Fuel Comb - Industrial Boilers, ICEs - Coal",])
+listado <- lista$SCC
+#colnames <- names(NEI)
+for (i in length(listado)) {
+  subNEI1 <- s1[s1$SCC==listado[2],]
+  subNEI <- rbind(subNEI1)
+}
 
-##########  5a pregunta How have emissions from motor vehicle sources changed from 1999â€“2008 in Baltimore City?
-#type == "ON-ROAD"
-
-
-##########  6a pregunta Compare emissions from motor vehicle sources in Baltimore City with emissions from motor vehicle sources in Los Angeles County, California (fips == "06037"). 
+##########  5a pregunta How have emissions from motor vehicle sources changed from 1999 to €“2008 in Baltimore City?
+Baltimore <- NEI[NEI$fips=="24510",]
+library("ggplot2")
+BaltimoreOnRoad <- Baltimore[Baltimore$type=="ON-ROAD",]
+g <- ggplot(BaltimoreOnRoad, aes(as.factor(year), sum(Emissions)))
+p <- g + geom_bar(stat="identity")  + labs(title="On Road Vehicle Emissions in Baltimore City") + labs(y="Emissions in tons") + labs(x="Years")
+print(p)
+##########  6a pregunta Compare emissions from motor vehicle sources in Baltimore City with emissions from motor vehicle 
+##########  sources in Los Angeles County, California (fips == "06037"). 
 ##########  Which city has seen greater changes over time in motor vehicle emissions?
-#type == "ON ROAD"
+BaltLA <- NEI[NEI$fips=="24510" | NEI$fips=="06037",]
+library("ggplot2")
+BaltLAOnRoad <- BaltLA[BaltLA$type=="ON-ROAD",]
+city_names <- list("06037"="Los Angeles", "24510"="Baltimore")
+city_labeller <- function(variable,value){return(city_names[value])}
+g <- ggplot(BaltLAOnRoad, aes(as.factor(year), sum(Emissions), fips))
+p <- g + geom_bar(stat="identity", col="steelblue") + facet_grid(.~ fips, labeller=city_labeller) + labs(title="On Road Vehicle Emissions: Los Angeles vs Baltimore City") + labs(y="Emissions in tons") + labs(x="Years")
+print(p)
