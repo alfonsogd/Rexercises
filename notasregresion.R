@@ -25,6 +25,64 @@ Which sum of squared term represents Residual Variation? = Yi-Yi_hat ej: sRes <-
 The term R^2 represents the percent of total variation described by the model = 1-residual variation/total variation 
 ej: 1- sRes/sTot = summary(fit)$r.squared =  cor(galton$child, galton$parent)^2
 
+## Ejemplo para intervalo de confianza de la regresión
+library(UsingR); data(diamond)
+y <- diamond$price; x <- diamond$carat; n <- length(y)
+beta1 <- cor(y, x) * sd(y) / sd(x)
+beta0 <- mean(y) - beta1 * mean(x)
+e <- y - beta0 - beta1 * x
+sigma <- sqrt(sum(e^2) / (n-2))
+ssx <- sum((x - mean(x))^2)
+seBeta0 <- (1 / n + mean(x) ^ 2 / ssx) ^ .5 * sigma
+seBeta1 <- sigma / sqrt(ssx)
+tBeta0 <- beta0 / seBeta0; tBeta1 <- beta1 / seBeta1
+pBeta0 <- 2 * pt(abs(tBeta0), df = n - 2, lower.tail = FALSE)
+pBeta1 <- 2 * pt(abs(tBeta1), df = n - 2, lower.tail = FALSE)
+coefTable <- rbind(c(beta0, seBeta0, tBeta0, pBeta0), c(beta1, seBeta1, tBeta1, pBeta1))
+colnames(coefTable) <- c("Estimate", "Std. Error", "t value", "P(>|t|)")
+rownames(coefTable) <- c("(Intercept)", "x")
+coefTable
+# Es lo mismo que:
+fit <- lm(y ~ x)
+summary(fit)$coefficients
+# obteniendo un intervalo de confianza
+sumCoef <- summary(fit)$coefficients
+sumCoef[1,1] + c(-1, 1) * qt(.975, df = fit$df) * sumCoef[1, 2]
+sumCoef[2,1] + c(-1, 1) * qt(.975, df = fit$df) * sumCoef[2, 2]
+# interpretamos que.. With 95% confidence, we estimate that a 0.1 carat increase in diamond size results
+# in a 355.6 to 388.6 increase in price in (Singapore) dollars.
+# Ploteando los intervalos de confianza
+plot(x, y, frame=FALSE,xlab="Carat",ylab="Dollars",pch=21,col="black", bg="lightblue", cex=2)
+abline(fit, lwd = 2)
+xVals <- seq(min(x), max(x), by = .01)
+yVals <- beta0 + beta1 * xVals
+se1 <- sigma * sqrt(1 / n + (xVals - mean(x))^2/ssx) # linea a X0 (se1)
+se2 <- sigma * sqrt(1 + 1 / n + (xVals - mean(x))^2/ssx) # Intervalo de la predicción (se2) 
+lines(xVals, yVals + 2 * se1)
+lines(xVals, yVals - 2 * se1)
+lines(xVals, yVals + 2 * se2)
+lines(xVals, yVals - 2 * se2)
+# en R
+newdata <- data.frame(x = xVals)
+p1 <- predict(fit, newdata, interval = ("confidence"))
+p2 <- predict(fit, newdata, interval = ("prediction"))
+plot(x, y, frame=FALSE,xlab="Carat",ylab="Dollars",pch=21,col="black", bg="lightblue", cex=2)
+abline(fit, lwd = 2)
+lines(xVals, p1[,2]); lines(xVals, p1[,3])
+lines(xVals, p2[,2]); lines(xVals, p2[,3])
 
-
-
+### Para el caso de regresión multivariable
+# la línea de regresión es la regresión al origen con una variable, eliminando las otras al reducir sus residuos
+# en lo que aportan a la línea de regresión
+# Ejemplo de aplicacion con dos variables y un intercepto
+n <- 100; x <- rnorm(n); x2 <- rnorm(n); x3 <- rnorm(n)
+y <- x + x2 + x3 + rnorm(n, sd = .1)
+e <- function(a, b) a - sum( a * b ) / sum( b ^ 2) * b
+ey <- e(e(y, x2), e(x3, x2))
+ex <- e(e(x, x2), e(x3, x2))
+sum(ey * ex) / sum(ex ^ 2)
+coef(lm(y ~ x + x2 + x3 - 1)) #the -1 removes the intercept term
+coef(lm(y ~ x + x2 + x3 - 1)) #the -1 removes the intercept term
+#So that the interpretation of a multivariate regression coefficient is the expected change in the
+#response per unit change in the regressor, holding all of the other regressors fixed.
+#
