@@ -1,0 +1,33 @@
+---
+title: "Statistical Inference Project"
+author: "Alfonso Gonzalez Damian"
+subtitle: Exponential distribution vs CLT
+output: html_document
+---
+
+### Exploring dataset
+* Exploring the dataset with summary, dim and plot.
+* We can see two clear groups in tooth growth by supp and three groups by dose
+```{r}
+data(ToothGrowth)
+library(reshape2)
+summary(ToothGrowth)
+dim(ToothGrowth)
+n <- length(ToothGrowth$len)
+par(mfrow =c(1,2))
+plot(ToothGrowth$len ~ ToothGrowth$supp, type="l", xlab="Supp", ylab="Tooth Growth")
+plot(ToothGrowth$len ~ as.factor(ToothGrowth$dose), xlab="Dose", ylab="Tooth Growth")
+```
+* We can test if this sample is a good estimator of the real population differences in toothgrowht
+
+### Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. 
+* Using the t.test in R for the hypothesis test that there is a difference greater than 0:
+
+```{r}
+results <- t.test(len ~ supp, paired = FALSE, alternative="g", data= ToothGrowth)
+results
+```
+* As we can see in the results the p-value < 0.05, so we can accept the alternative hypothesis
+
+### Conclusions and the assumptions needed
+We can conclude that the confidence interval for the two groups (OC and VC) mean difference in toot growth with a 95% of confidence includes the true difference between them.

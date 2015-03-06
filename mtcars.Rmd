@@ -1,0 +1,39 @@
+---
+title: "Regression Project"
+author: "Alfonso Gonzalez Damian"
+subtitle: mtcars
+output: html_document
+---
+### Exploring dataset
+* Exploring the dataset with paired plot, summary and dim.
+``` {r}
+data(mtcars)
+require(graphics)
+pairs(mtcars, main = "mtcars data")
+coplot(mpg ~ disp | as.factor(cyl), data = mtcars,
+       panel = panel.smooth, rows = 1)
+summary(mtcars)
+dim(mtcars)
+```
+
+A data frame with 32 observations on 11 variables.
+[, 1]  mpg   Miles/(US) gallon
+[, 2]	 cyl	 Number of cylinders
+[, 3]	 disp	 Displacement (cu.in.)
+[, 4]	 hp	 Gross horsepower
+[, 5]	 drat	 Rear axle ratio
+[, 6]	 wt	 Weight (lb/1000)
+[, 7]	 qsec	 1/4 mile time
+[, 8]	 vs	 V/S
+[, 9]	 am	 Transmission (0 = automatic, 1 = manual)
+[,10]	 gear	 Number of forward gears
+[,11]	 carb	 Number of carburetors
+
+Source: Henderson and Velleman (1981), Building multiple regression models interactively. Biometrics, 37, 391-411.
+
+### Linear model as Henderson y Velleman (1981) said
+``` {r}
+hpwt <- mtcars$hp/mtcars$wt
+summary(lm(mtcars$mpg^-1*100 ~ mtcars$wt + hpwt))
+```
+### Conclusions
